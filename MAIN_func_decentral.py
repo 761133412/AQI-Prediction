@@ -1055,6 +1055,192 @@ def Wavelet_SLSTM(wvlt_list, y_rampflag, dataY):
     print(model_name + ' Complete.')
     return predict_WS
 
+
+def BLSTM(x_train, y_train, x_test, y_test, y_rampflag, dataY):
+    model_name = 'BLSTM'
+    model_name_short = 'BLSTM'
+    print(model_name + ' Start.')
+
+    feature_num = x_train.shape[1]
+    x_train_blstm = np.reshape(x_train, (x_train.shape[0], x_train.shape[1], 1))
+    x_test_blstm = np.reshape(x_test, (x_test.shape[0], x_test.shape[1], 1))
+
+    # Modelling and Predicting
+    print('Build model...')
+
+    model = buildBLSTM(feature_num)
+    # model = buildOLSTM(feature_num)
+
+    global show_process
+
+    time_callback = TimeHistory()
+    history = model.fit(x_train_blstm, y_train, epochs=16, validation_split=0.05, verbose=show_process,
+                        callbacks=[time_callback])
+    train_time = time_callback.totaltime
+
+    predict_blstm = model.predict(x_test_blstm)
+
+    # history = model.fit(x_train, y_train, epochs=16, validation_split=0.05, verbose=2)
+    #
+    # predict_blstm = model.predict(x_test)
+    predict_blstm = predict_blstm.reshape(-1, )
+    predict_blstm = scaler_target.inverse_transform(predict_blstm)
+    flag_blstm = deal_flag(predict_blstm, minLen)
+    accuracy_blstm = deal_accuracy(y_rampflag, flag_blstm)
+
+    # rmse_blstm = RMSE1(dataY, predict_blstm)
+    # mape_blstm = MAPE1(dataY, predict_blstm)
+    # mae_blstm = MAE1(dataY, predict_blstm)
+    #
+    # global eva_output, result_all
+    # eva_output += '\n\nmae_blstm: {}'.format(mae_blstm)
+    # eva_output += '\nrmse_blstm: {}'.format(rmse_blstm)
+    # eva_output += '\nmape_blstm: {}'.format(mape_blstm)
+    # eva_output += '\naccuracy_blstm: {}'.format(accuracy_blstm)
+    # result_all.append(['blstm', mae_blstm, rmse_blstm, mape_blstm, accuracy_blstm])
+
+    global eva_output, result_all
+    result_print, result_csv = Evaluate_DL(model_name,
+                                           model_name_short,
+                                           dataY,
+                                           predict_blstm,
+                                           accuracy_blstm,
+                                           train_time)
+    eva_output += result_print
+    result_all.append(result_csv)
+
+    print(model_name + ' Complete.')
+    return predict_blstm
+
+
+def EMD_BLSTM(emd_list, y_rampflag, dataY, emd_decay_rate):
+    model_name = 'EB'
+    model_name_short = 'EB'
+    print(model_name + ' Start.')
+
+    model = buildBLSTM(ahead_num)
+
+    global show_process
+
+    predict_emd_list = []
+    train_time_total = 0
+    for ie in range(len(emd_list)):
+        # emd_list[ie][0] = np.reshape(emd_list[ie][0], (emd_list[ie][0].shape[0], emd_list[ie][0].shape[1], 1))
+        # emd_list[ie][2] = np.reshape(emd_list[ie][2], (emd_list[ie][2].shape[0], emd_list[ie][2].shape[1], 1))
+        EMD_trX = np.reshape(emd_list[ie][0], (emd_list[ie][0].shape[0], emd_list[ie][0].shape[1], 1))
+        EMD_teX = np.reshape(emd_list[ie][2], (emd_list[ie][2].shape[0], emd_list[ie][2].shape[1], 1))
+        EMD_trY = emd_list[ie][1]
+        time_callback = TimeHistory()
+        model.fit(EMD_trX, EMD_trY, epochs=16, validation_split=0.05, verbose=show_process, callbacks=[time_callback])
+        train_time = time_callback.totaltime
+        train_time_total = train_time_total + train_time
+        # model.fit(emd_list[ie][0], emd_list[ie][1], epochs=16, verbose=0, callbacks=[TQDMCallback()])
+        predict_emd_part = model.predict(EMD_teX)
+        predict_emd_part = predict_emd_part.reshape(-1, )
+        predict_emd_list.append(predict_emd_part)
+        print('EMD_imf ' + str(ie + 1) + ' Complete.')
+
+    # wavefun = pywt.Wavelet('db1')
+    # predict_EB = iswt_decom(predict_emd_list, wavefun)
+
+    predict_EB = predict_emd_list[-1]
+    for i in range(len(predict_emd_list) - 1):
+        predict_EB = predict_EB + predict_emd_list[i] * emd_decay_rate
+    # predict_noise = predict_EB - predict_emd_list[-1]
+
+    predict_EB = scaler_target.inverse_transform(predict_EB)
+    flag_EB = deal_flag(predict_EB, minLen)
+    accuracy_EB = deal_accuracy(y_rampflag, flag_EB)
+
+    # rmse_EB = RMSE1(dataY, predict_EB)
+    # mape_EB = MAPE1(dataY, predict_EB)
+    # mae_EB = MAE1(dataY, predict_EB)
+    #
+    # global eva_output, result_all
+    # eva_output += '\n\nmae_EB: {}'.format(mae_EB)
+    # eva_output += '\nrmse_EB: {}'.format(rmse_EB)
+    # eva_output += '\nmape_EB: {}'.format(mape_EB)
+    # eva_output += '\naccuracy_EB: {}'.format(accuracy_EB)
+    # result_all.append(['EN', mae_EB, rmse_EB, mape_EB, accuracy_EB])
+
+    global eva_output, result_all
+    result_print, result_csv = Evaluate_DL(model_name,
+                                           model_name_short,
+                                           dataY,
+                                           predict_EB,
+                                           accuracy_EB,
+                                           train_time_total)
+    eva_output += result_print
+    result_all.append(result_csv)
+
+    print(model_name + ' Complete.')
+    return predict_EB
+
+
+def Wavelet_BLSTM(wvlt_list, y_rampflag, dataY):
+    model_name = 'WB'
+    model_name_short = 'WB'
+    print(model_name + ' Start.')
+
+    model = buildBLSTM(ahead_num)
+
+    global show_process
+
+    train_time_total = 0
+    predict_WB_list = []
+    for i_wvlt in range(len(wvlt_list)):
+        wvlt_trX = np.reshape(wvlt_list[i_wvlt][0],
+                              (wvlt_list[i_wvlt][0].shape[0],
+                               wvlt_list[i_wvlt][0].shape[1], 1))
+        wvlt_teX = np.reshape(wvlt_list[i_wvlt][2],
+                              (wvlt_list[i_wvlt][2].shape[0],
+                               wvlt_list[i_wvlt][2].shape[1], 1))
+        wvlt_trY = wvlt_list[i_wvlt][1]
+
+        time_callback = TimeHistory()
+        model.fit(wvlt_trX, wvlt_trY, epochs=16, validation_split=0.05, verbose=show_process, callbacks=[time_callback])
+        # model.fit(wvlt_list[i_wvlt][0], wvlt_list[i_wvlt][1], epochs=16, verbose=0, callbacks=[TQDMCallback()])
+        train_time = time_callback.totaltime
+        train_time_total = train_time_total + train_time
+
+        predict_WB = model.predict(wvlt_teX)
+        predict_WB = predict_WB.reshape(-1, )
+        predict_WB_list.append(predict_WB)
+        print('wvlt_level ' + str(i_wvlt) + ' Complete.')
+
+    wavefun = pywt.Wavelet('db1')
+
+    predict_WB = iswt_decom(predict_WB_list, wavefun)
+    predict_WB = scaler_target.inverse_transform(predict_WB)
+    flag_WB = deal_flag(predict_WB, minLen)
+    accuracy_WB = deal_accuracy(y_rampflag, flag_WB)
+
+    # # dataY1 = scaler_target.inverse_transform(dataY1)
+    # # dataY1 = dataY1.T.tolist()[0]
+    # rmse_WB = RMSE1(dataY, predict_WB)
+    # mape_WB = MAPE1(dataY, predict_WB)
+    # mae_WB = MAE1(dataY, predict_WB)
+    #
+    # global eva_output, result_all
+    # eva_output += '\n\nmae_WB: {}'.format(mae_WB)
+    # eva_output += '\nrmse_WB: {}'.format(rmse_WB)
+    # eva_output += '\nmape_WB: {}'.format(mape_WB)
+    # eva_output += '\naccuracy_WB: {}'.format(accuracy_WB)
+    # result_all.append(['WN', mae_WB, rmse_WB, mape_WB, accuracy_WB])
+
+    global eva_output, result_all
+    result_print, result_csv = Evaluate_DL(model_name,
+                                           model_name_short,
+                                           dataY,
+                                           predict_WB,
+                                           accuracy_WB,
+                                           train_time_total)
+    eva_output += result_print
+    result_all.append(result_csv)
+
+    print(model_name + ' Complete.')
+    return predict_WB
+
 #########################################################################
 
 
@@ -1166,6 +1352,10 @@ def main(start_num, interval_ori):
     # predict_slstm = Stacked_LSTM(x_train, y_train, x_test, y_test, y_rampflag, dataY)
     # predict_ES = EMD_SLSTM(emd_list, y_rampflag, dataY, emd_decay_rate)
     # predict_WS = Wavelet_SLSTM(wvlt_list, y_rampflag, dataY)
+
+    # predict_blstm = BLSTM(x_train, y_train, x_test, y_test, y_rampflag, dataY)
+    # predict_EB = EMD_BLSTM(emd_list, y_rampflag, dataY, emd_decay_rate)
+    # predict_WB = Wavelet_BLSTM(wvlt_list, y_rampflag, dataY)
 
     print(eva_output)
 
