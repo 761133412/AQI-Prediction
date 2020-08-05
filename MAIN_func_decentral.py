@@ -1330,32 +1330,32 @@ def main(start_num, interval_ori):
     eva_output = '\nEvaluation.'
     result_all = []
 
-    # predict_decideTree = Decide_Tree(x_train, y_train, x_test, y_test, y_rampflag, dataY)
-    # predict_randomForest = Random_forest(x_train, y_train, x_test, y_test, y_rampflag, dataY)
-    # predict_linear = Linear_Regression(x_train, y_train, x_test, y_test, y_rampflag, dataY)
-    # predict_svr = SVR(x_train, y_train, x_test, y_test, y_rampflag, dataY)
-    # predict_kNeighbors = KNN(x_train, y_train, x_test, y_test, y_rampflag, dataY)
-    # predict_mlp = MLP(x_train, y_train, x_test, y_test, y_rampflag, dataY)
-    # predict_gradientBoosting = gradient_Boosting(x_train, y_train, x_test, y_test, y_rampflag, dataY)
-    # predict_extraTree = extra_Tree(x_train, y_train, x_test, y_test, y_rampflag, dataY)
-    # predict_bagging = bagging(x_train, y_train, x_test, y_test, y_rampflag, dataY)
-    # predict_adaboost = adaboost(x_train, y_train, x_test, y_test, y_rampflag, dataY)
+    predict_decideTree = Decide_Tree(x_train, y_train, x_test, y_test, y_rampflag, dataY)
+    predict_randomForest = Random_forest(x_train, y_train, x_test, y_test, y_rampflag, dataY)
+    predict_linear = Linear_Regression(x_train, y_train, x_test, y_test, y_rampflag, dataY)
+    predict_svr = SVR(x_train, y_train, x_test, y_test, y_rampflag, dataY)
+    predict_kNeighbors = KNN(x_train, y_train, x_test, y_test, y_rampflag, dataY)
+    predict_mlp = MLP(x_train, y_train, x_test, y_test, y_rampflag, dataY)
+    predict_gradientBoosting = gradient_Boosting(x_train, y_train, x_test, y_test, y_rampflag, dataY)
+    predict_extraTree = extra_Tree(x_train, y_train, x_test, y_test, y_rampflag, dataY)
+    predict_bagging = bagging(x_train, y_train, x_test, y_test, y_rampflag, dataY)
+    predict_adaboost = adaboost(x_train, y_train, x_test, y_test, y_rampflag, dataY)
 
-    # predict_lstm = LSTM(x_train, y_train, x_test, y_test, y_rampflag, dataY)
-    # predict_lstm_emd = EMD_LSTM(emd_list, y_rampflag, dataY, emd_decay_rate)
-    # predict_wavelet = Wavelet_LSTM(wvlt_list, y_rampflag, dataY)
+    predict_lstm = LSTM(x_train, y_train, x_test, y_test, y_rampflag, dataY)
+    predict_lstm_emd = EMD_LSTM(emd_list, y_rampflag, dataY, emd_decay_rate)
+    predict_wavelet = Wavelet_LSTM(wvlt_list, y_rampflag, dataY)
 
-    # predict_nlstm = Nested_LSTM(x_train, y_train, x_test, y_test, y_rampflag, dataY)
-    # predict_EN = EMD_NLSTM(emd_list, y_rampflag, dataY, emd_decay_rate)
+    predict_nlstm = Nested_LSTM(x_train, y_train, x_test, y_test, y_rampflag, dataY)
+    predict_EN = EMD_NLSTM(emd_list, y_rampflag, dataY, emd_decay_rate)
     predict_WN = Wavelet_NLSTM(wvlt_list, y_rampflag, dataY)
 
-    # predict_slstm = Stacked_LSTM(x_train, y_train, x_test, y_test, y_rampflag, dataY)
-    # predict_ES = EMD_SLSTM(emd_list, y_rampflag, dataY, emd_decay_rate)
-    # predict_WS = Wavelet_SLSTM(wvlt_list, y_rampflag, dataY)
+    predict_slstm = Stacked_LSTM(x_train, y_train, x_test, y_test, y_rampflag, dataY)
+    predict_ES = EMD_SLSTM(emd_list, y_rampflag, dataY, emd_decay_rate)
+    predict_WS = Wavelet_SLSTM(wvlt_list, y_rampflag, dataY)
 
-    # predict_blstm = BLSTM(x_train, y_train, x_test, y_test, y_rampflag, dataY)
-    # predict_EB = EMD_BLSTM(emd_list, y_rampflag, dataY, emd_decay_rate)
-    # predict_WB = Wavelet_BLSTM(wvlt_list, y_rampflag, dataY)
+    predict_blstm = BLSTM(x_train, y_train, x_test, y_test, y_rampflag, dataY)
+    predict_EB = EMD_BLSTM(emd_list, y_rampflag, dataY, emd_decay_rate)
+    predict_WB = Wavelet_BLSTM(wvlt_list, y_rampflag, dataY)
 
     print(eva_output)
 
