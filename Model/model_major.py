@@ -1,7 +1,6 @@
 from keras.models import Input, Model, Sequential                     #### TCN
 from keras.layers import Dense, Activation, Conv1D, LSTM, Dropout, Reshape, Bidirectional, Flatten, Add, Concatenate, MaxPool1D, LeakyReLU
 from keras.callbacks import Callback
-from Support.support_tcn import TCN
 
 from Support.support_nested_lstm import NestedLSTM      ##### NLSTM
 from Support.support_OL import ONLSTM
